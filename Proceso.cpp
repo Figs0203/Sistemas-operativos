@@ -70,7 +70,7 @@ public:
 };
 
 int main() {
-    Proceso p("process1.txt");
+    Proceso p("proceso1.txt");
     p.siguienteInstruccion();
     return 0;
 }
