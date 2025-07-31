@@ -12,11 +12,11 @@ using namespace std;
 class Proceso {
     int pid;
     // vector<string>::iterator
-    int pc; // Program Counter simulado
     int ax, bx, cx; // Registros simulados
     int quantum;
     string estado; // "Listo", "Ejecutando", "Terminado"
-    queue<string> instrucciones;
+    vector<string> instrucciones;
+    vector<string>::iterator pc; // Program Counter simulado
 
 public:
     Proceso();

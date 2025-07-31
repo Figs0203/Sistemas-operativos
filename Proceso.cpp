@@ -12,6 +12,7 @@ Proceso::Proceso() {
 
 Proceso::Proceso(string nombreArchivo) {
     cargarInstrucciones(nombreArchivo);
+    pc = instrucciones.begin();
 }
 
 
@@ -23,8 +24,8 @@ void Proceso::siguienteInstruccion() {
     // cout << instrucciones.size() << endl;
     std::cout<<"AX: "<<ax<<" Bx: "<<bx<<" Cx: "<<cx<<endl;
 
-    if (!instrucciones.empty()) {
-        string cabeza = instrucciones.front();
+    if (pc!=instrucciones.end()) {
+        string cabeza = *pc;
         std::cout << "Ejecutando instrucción: " << cabeza << endl;
         
         stringstream ss(cabeza);
@@ -63,80 +64,80 @@ void Proceso::siguienteInstruccion() {
         }
         
         
-        instrucciones.pop();
+        pc+=1;
 
     }
 }
 
 
 void Proceso::guardarContexto() {
-    string ramAddress = "data"+to_string(pid)+".bin";
-    ofstream archivo(ramAddress, ios::binary);
-    if (!archivo) {
-        cerr << "No se pudo abrir el archivo." << endl;
-        return;
-    }
+    // string ramAddress = "data"+to_string(pid)+".bin";
+    // ofstream archivo(ramAddress, ios::binary);
+    // if (!archivo) {
+    //     cerr << "No se pudo abrir el archivo." << endl;
+    //     return;
+    // }
 
-    archivo.write(reinterpret_cast<char*>(&pid), sizeof(pid));
-    archivo.write(reinterpret_cast<char*>(&pc), sizeof(pc));
-    archivo.write(reinterpret_cast<char*>(&ax), sizeof(ax));
-    archivo.write(reinterpret_cast<char*>(&bx), sizeof(bx));
-    archivo.write(reinterpret_cast<char*>(&cx), sizeof(cx));
-    archivo.write(reinterpret_cast<char*>(&quantum), sizeof(quantum));
+    // archivo.write(reinterpret_cast<char*>(&pid), sizeof(pid));
+    // archivo.write(reinterpret_cast<char*>(&pc), sizeof(pc));
+    // archivo.write(reinterpret_cast<char*>(&ax), sizeof(ax));
+    // archivo.write(reinterpret_cast<char*>(&bx), sizeof(bx));
+    // archivo.write(reinterpret_cast<char*>(&cx), sizeof(cx));
+    // archivo.write(reinterpret_cast<char*>(&quantum), sizeof(quantum));
 
-    size_t lenEstado = estado.size();
-    archivo.write(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
-    archivo.write(estado.c_str(), lenEstado);
+    // size_t lenEstado = estado.size();
+    // archivo.write(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
+    // archivo.write(estado.c_str(), lenEstado);
 
-    size_t numInstrucciones = instrucciones.size();
-    archivo.write(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
-    while (!instrucciones.empty()) {
-        string instr = instrucciones.front();
-        instrucciones.pop();
+    // size_t numInstrucciones = instrucciones.size();
+    // archivo.write(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
+    // while (!instrucciones.empty()) {
+    //     string instr = instrucciones.front();
+    //     instrucciones.pop();
 
-        size_t lenInstr = instr.size();
-        archivo.write(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
-        archivo.write(instr.c_str(), lenInstr);
-    }
+    //     size_t lenInstr = instr.size();
+    //     archivo.write(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
+    //     archivo.write(instr.c_str(), lenInstr);
+    // }
 
-    archivo.close();
-    cout<<"contexto guardado"<<endl;
+    // archivo.close();
+    // cout<<"contexto guardado"<<endl;
 }
 
 void Proceso::cargarContexto() {
-    ifstream archivo("data.bin", ios::binary);
-    if (!archivo) {
-        cerr << "No se pudo abrir el archivo para lectura." << endl;
-        return;
-    }
+    // ifstream archivo("data.bin", ios::binary);
+    // if (!archivo) {
+    //     cerr << "No se pudo abrir el archivo para lectura." << endl;
+    //     return;
+    // }
 
-    archivo.read(reinterpret_cast<char*>(&pid), sizeof(pid));
-    archivo.read(reinterpret_cast<char*>(&pc), sizeof(pc));
-    archivo.read(reinterpret_cast<char*>(&ax), sizeof(ax));
-    archivo.read(reinterpret_cast<char*>(&bx), sizeof(bx));
-    archivo.read(reinterpret_cast<char*>(&cx), sizeof(cx));
-    archivo.read(reinterpret_cast<char*>(&quantum), sizeof(quantum));
+    // archivo.read(reinterpret_cast<char*>(&pid), sizeof(pid));
+    // archivo.read(reinterpret_cast<char*>(&pc), sizeof(pc));
+    // archivo.read(reinterpret_cast<char*>(&ax), sizeof(ax));
+    // archivo.read(reinterpret_cast<char*>(&bx), sizeof(bx));
+    // archivo.read(reinterpret_cast<char*>(&cx), sizeof(cx));
+    // archivo.read(reinterpret_cast<char*>(&quantum), sizeof(quantum));
 
-    size_t lenEstado;
-    archivo.read(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
-    estado.resize(lenEstado);
-    archivo.read(&estado[0], lenEstado);
+    // size_t lenEstado;
+    // archivo.read(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
+    // estado.resize(lenEstado);
+    // archivo.read(&estado[0], lenEstado);
 
-    while(!instrucciones.empty()) instrucciones.pop();
+    // while(!instrucciones.empty()) instrucciones.pop();
 
-    size_t numInstrucciones;
-    archivo.read(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
+    // size_t numInstrucciones;
+    // archivo.read(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
 
-    for (size_t i = 0; i < numInstrucciones; i++) {
-        size_t lenInstr;
-        archivo.read(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
-        string instr(lenInstr, '\0');
-        archivo.read(&instr[0], lenInstr);
-        instrucciones.push(instr);
-    }
+    // for (size_t i = 0; i < numInstrucciones; i++) {
+    //     size_t lenInstr;
+    //     archivo.read(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
+    //     string instr(lenInstr, '\0');
+    //     archivo.read(&instr[0], lenInstr);
+    //     instrucciones.push(instr);
+    // }
 
-    archivo.close();
-    cout<<"contexto cargado"<<endl;
+    // archivo.close();
+    // cout<<"contexto cargado"<<endl;
 }
 
 void Proceso::cargarInstrucciones(string nombreArchivo) {
@@ -165,7 +166,7 @@ void Proceso::cargarInstrucciones(string nombreArchivo) {
             continue;
         }
         // cout<<pid<<endl;
-        instrucciones.push(linea);
+        instrucciones.push_back(linea);
     }
 
     MyReadFile.close();
