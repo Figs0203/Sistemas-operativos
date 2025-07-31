@@ -2,17 +2,23 @@
 CXX = g++
 CXXFLAGS = -Wall
 
+SRC = main.cpp Proceso.cpp CPU.cpp
+OBJS = main.o Proceso.o CPU.o
+EXEC = programa
 
-OBJS = main.o Proceso.o
+$(EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $(EXEC)
 
-programa: $(OBJS)
-	$(CXX) $(OBJS) -o programa
-
-main.o: main.cpp 
+main.o: main.cpp Proceso.h CPU.h
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
-Proceso.o: Proceso.cpp 
+Proceso.o: Proceso.cpp Proceso.h
 	$(CXX) $(CXXFLAGS) -c Proceso.cpp
 
+CPU.o: CPU.cpp CPU.h
+	$(CXX) $(CXXFLAGS) -c CPU.cpp
+
 clean:
-	rm -f *.o programa
+	$(RM) *.o $(EXEC)
+
+.PHONY: clean

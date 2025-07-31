@@ -94,11 +94,23 @@ void Proceso::siguienteInstruccion() {
                 *elementos[variable1] *= *elementos[variable2];
 
             }
-        }
-        
-        
-        pc+=1;
+        }else if (instruccion == "JMP") {
+            ss >> valor1;
+            int salto;
+            if(isNumber(valor1)){
+                salto = stoi(valor1);
+            } else {
+                salto = valor1[0] - 'A';
+            }
+            if (salto >= 0 && salto < instrucciones.size()) {
+                pc = instrucciones.begin() + salto;
+            } else {
+                // Manejo de error: salto fuera de rango
+                std::cout << "Salto fuera de rango: " << salto << std::endl;
+            }
+            pc += 1;
 
+        }
     }
 }
 
