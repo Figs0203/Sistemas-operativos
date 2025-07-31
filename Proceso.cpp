@@ -3,8 +3,11 @@
 #include <fstream>
 #include <regex>
 #include <vector>
+#include <cctype>
 
 using namespace std;
+
+
 
 Proceso::Proceso() {
    
@@ -18,6 +21,13 @@ Proceso::Proceso(string nombreArchivo) {
 
 bool Proceso::instruccionesPendientes() {
     return !instrucciones.empty();
+}
+
+bool isNumber(const std::string& str) {
+    for (char c : str) {
+        if (!isdigit(c)) return false;
+    }
+    return !str.empty();
 }
 
 void Proceso::siguienteInstruccion() {
@@ -35,32 +45,55 @@ void Proceso::siguienteInstruccion() {
 
         string valor1, valor2;
         int* elementos[3] = {&ax, &bx, &cx};
+        ss >> valor1;
+
         if (instruccion == "ADD") {
-            ss >> valor1;
             ss >> valor2;
-            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            *elementos[variable1] += *elementos[variable2];
+            if(isNumber(valor2)){
+                int variable1 = valor1[0] - 'A';
+                *elementos[variable1] += stoi(valor2);
+
+            }
+            else{
+                int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+                int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+                *elementos[variable1] += *elementos[variable2];
+
+            }
             
         } 
         else if (instruccion == "SUB") {
-            ss >> valor1;
             ss >> valor2;
-            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            *elementos[variable1] -= *elementos[variable2];
+            if(isNumber(valor2)){
+                int variable1 = valor1[0] - 'A';
+                *elementos[variable1] -= stoi(valor2);
+
+            }
+            else{
+                int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+                int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+                *elementos[variable1] -= *elementos[variable2];
+
+            }
         }
         else if (instruccion == "INC") {
-            ss >> valor1;
             int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
             *elementos[variable1] += 1;
         }
+
         else if (instruccion == "MUL") {
-            ss >> valor1;
             ss >> valor2;
-            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            *elementos[variable1] -= *elementos[variable2];
+            if(isNumber(valor2)){
+                int variable1 = valor1[0] - 'A';
+                *elementos[variable1] *= stoi(valor2);
+
+            }
+            else{
+                int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+                int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+                *elementos[variable1] *= *elementos[variable2];
+
+            }
         }
         
         
