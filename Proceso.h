@@ -16,6 +16,7 @@ class Proceso {
     queue<string> instrucciones;
 
 public:
+    Proceso();
     Proceso(string nombreArchivo);
     bool instruccionesPendientes();
     void siguienteInstruccion();
@@ -23,6 +24,7 @@ public:
     void cargarContexto();
     void cargarInstrucciones(std::string nombreArchivo);
     int getPID();
+    int getQuantum();
 };
 
 #endif

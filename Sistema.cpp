@@ -15,14 +15,15 @@ void cargarProcesos(unordered_map<int,Proceso>& procesos, vector<string>& archiv
     for(int i =0;i< (int)archivosProcesos.size();i++){
         Proceso p(archivosProcesos[i]);
         roundRobin.push(p.getPID());
-        // procesos[p.getPID()] = p;
-        cout<<archivosProcesos[i]<<endl;
+        procesos[p.getPID()] = p;
+        // cout<<archivosProcesos[i]<<endl;
     }
     cout<<"Procesos cargados en \"RAM\" "<<endl;
 }
 
 int main(){
 
+    CPU cpu;
     vector<string> archivosProcesos;
     cout<<"procplanner - Simulación de planificación de procesos."<<endl;
     cout<<"para ejecutar escribe run"<<endl;
@@ -36,6 +37,8 @@ int main(){
         input = "procesos/"+input;
         archivosProcesos.push_back(input);
     }while(input!="run");
+
+    for(string s:archivosProcesos) cout<<s<<endl;
     
 
     queue<int> roundRobin;
@@ -43,16 +46,16 @@ int main(){
     cargarProcesos(procesos,archivosProcesos,roundRobin);
 
     while(!roundRobin.empty()){
-        cout<<roundRobin.front()<<endl;
+        Proceso temporal = procesos[roundRobin.front()];
         roundRobin.pop();
+        
+        int quantum = temporal.getQuantum();
+        int ID = temporal.getPID();
+        for(int i = 0; i< quantum;i++){
+            cpu.correr(procesos[ID]);
+        }
+        if(temporal.instruccionesPendientes()) roundRobin.push(temporal.getPID());
     }
-
-    CPU cpu;
-    cpu.correr(procesos[1]);
-
-
-
-
     
     return 0;
 

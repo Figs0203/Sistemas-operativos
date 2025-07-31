@@ -1,4 +1,4 @@
-PID: 1, AX=2, BX=3, CX=12, Quantum=3
+PID: 1, AX=2, BX=3, CX=12, Quantum=1
 ADD AX, BX
 INC AX
 NOP

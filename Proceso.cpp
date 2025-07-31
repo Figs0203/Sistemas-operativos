@@ -6,13 +6,17 @@
 
 using namespace std;
 
+Proceso::Proceso() {
+   
+}
+
 Proceso::Proceso(string nombreArchivo) {
     cargarInstrucciones(nombreArchivo);
 }
 
 
 bool Proceso::instruccionesPendientes() {
-    return estado != "Terminado";
+    return !instrucciones.empty();
 }
 
 void Proceso::siguienteInstruccion() {
@@ -127,4 +131,8 @@ void Proceso::cargarInstrucciones(string nombreArchivo) {
 
 int Proceso::getPID(){
     return pid;
+}
+
+int Proceso::getQuantum(){
+    return quantum;
 }
