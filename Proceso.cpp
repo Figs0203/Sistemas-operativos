@@ -1,76 +1,130 @@
+#include "Proceso.h"
 #include <iostream>
-#include <vector>
 #include <fstream>
 #include <regex>
-
+#include <vector>
 
 using namespace std;
 
-class Proceso {
-    int pid;
-    int pc; // Program Counter simulado
-    int ax, bx, cx; // Registros simulados
-    int quantum;
-    string estado; // "Listo", "Ejecutando", "Terminado"
-    vector<string> instrucciones;
-    vector<string>::iterator it;
+Proceso::Proceso(string nombreArchivo) {
+    cargarInstrucciones(nombreArchivo);
+}
 
 
-public:
-    Proceso(string nombreArchivo) {
-        llenarInstrucciones(nombreArchivo);
-        it = instrucciones.begin();
+bool Proceso::instruccionesPendientes() {
+    return estado != "Terminado";
+}
+
+void Proceso::siguienteInstruccion() {
+    // cout << instrucciones.size() << endl;
+    if (!instrucciones.empty()) {
+        cout << "Ejecutando instrucción: " << instrucciones.front() << endl;
+        instrucciones.pop();
+    }
+}
+
+void Proceso::guardarContexto() {
+    string ramAddress = "data"+to_string(pid)+".bin";
+    ofstream archivo(ramAddress, ios::binary);
+    if (!archivo) {
+        cerr << "No se pudo abrir el archivo." << endl;
+        return;
     }
 
-    bool instruccionesPendientes(){
-        return estado!="Terminado";
+    archivo.write(reinterpret_cast<char*>(&pid), sizeof(pid));
+    archivo.write(reinterpret_cast<char*>(&pc), sizeof(pc));
+    archivo.write(reinterpret_cast<char*>(&ax), sizeof(ax));
+    archivo.write(reinterpret_cast<char*>(&bx), sizeof(bx));
+    archivo.write(reinterpret_cast<char*>(&cx), sizeof(cx));
+    archivo.write(reinterpret_cast<char*>(&quantum), sizeof(quantum));
+
+    size_t lenEstado = estado.size();
+    archivo.write(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
+    archivo.write(estado.c_str(), lenEstado);
+
+    size_t numInstrucciones = instrucciones.size();
+    archivo.write(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
+    while (!instrucciones.empty()) {
+        string instr = instrucciones.front();
+        instrucciones.pop();
+
+        size_t lenInstr = instr.size();
+        archivo.write(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
+        archivo.write(instr.c_str(), lenInstr);
     }
 
-    void siguienteInstruccion() {
-        cout<<instrucciones.size()<<endl;
-        while (it != instrucciones.end()) {
-            cout << "Ejecutando instrucción: " << *it << endl;
-            ++it;
-        }
-        if(it == instrucciones.end()) estado = "Terminado";
+    archivo.close();
+    cout<<"contexto guardado"<<endl;
+}
+
+void Proceso::cargarContexto() {
+    ifstream archivo("data.bin", ios::binary);
+    if (!archivo) {
+        cerr << "No se pudo abrir el archivo para lectura." << endl;
+        return;
     }
 
+    archivo.read(reinterpret_cast<char*>(&pid), sizeof(pid));
+    archivo.read(reinterpret_cast<char*>(&pc), sizeof(pc));
+    archivo.read(reinterpret_cast<char*>(&ax), sizeof(ax));
+    archivo.read(reinterpret_cast<char*>(&bx), sizeof(bx));
+    archivo.read(reinterpret_cast<char*>(&cx), sizeof(cx));
+    archivo.read(reinterpret_cast<char*>(&quantum), sizeof(quantum));
 
-    void llenarInstrucciones(string nombreArchivo){
-        string linea;
-        ifstream MyReadFile(nombreArchivo);
-        bool primeraLinea = true;
-        int* elementos[5] = {&pid,&ax, &bx, &cx, &quantum};
+    size_t lenEstado;
+    archivo.read(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
+    estado.resize(lenEstado);
+    archivo.read(&estado[0], lenEstado);
 
-        while (getline (MyReadFile, linea)) {
-            if(primeraLinea){
+    while(!instrucciones.empty()) instrucciones.pop();
 
-                smatch match;
-                string patrones[5] = {R"(PID:\s*(\d+))",R"(AX=\s*(\d+))",R"(BX=\s*(\d+))",R"(CX=\s*(\d+))",R"(Quantum=\s*(\d+))"};
+    size_t numInstrucciones;
+    archivo.read(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
 
-                for(int i = 0; i<5;i++){
-                    regex patron(patrones[i]);
-                    if (std::regex_search(linea,match, patron)) {
-                        *elementos[i] = stoi(match[1]);
-                        std::cout << stoi(match[1]) << std::endl;
-                    } else {
-                        std::cout << "Instrucciones ingresadas erroneamente" << std::endl;
-                        break;
-                    }
+    for (size_t i = 0; i < numInstrucciones; i++) {
+        size_t lenInstr;
+        archivo.read(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
+        string instr(lenInstr, '\0');
+        archivo.read(&instr[0], lenInstr);
+        instrucciones.push(instr);
+    }
+
+    archivo.close();
+    cout<<"contexto cargado"<<endl;
+}
+
+void Proceso::cargarInstrucciones(string nombreArchivo) {
+    string linea;
+    ifstream MyReadFile(nombreArchivo);
+    bool primeraLinea = true;
+    int* elementos[5] = {&pid, &ax, &bx, &cx, &quantum};
+
+    while (getline(MyReadFile, linea)) {
+        if (primeraLinea) {
+            smatch match;
+            string patrones[5] = {R"(PID:\s*(\d+))",R"(AX=\s*(\d+))",R"(BX=\s*(\d+))",R"(CX=\s*(\d+))",R"(Quantum=\s*(\d+))"};
+
+            for (int i = 0; i < 5; i++) {
+                regex patron(patrones[i]);
+                if (regex_search(linea, match, patron)) {
+                    *elementos[i] = stoi(match[1]);
+                    // cout << match[1] << endl;
+                } else {
+                    cout << "Instrucciones ingresadas erróneamente" << endl;
+                    break;
                 }
-                primeraLinea = false;
-                continue;
             }
-            instrucciones.push_back(linea);
-            // cout << linea <<endl;
-        }   
-        MyReadFile.close();
-
+            estado = "Listo";
+            primeraLinea = false;
+            continue;
+        }
+        // cout<<pid<<endl;
+        instrucciones.push(linea);
     }
-};
 
-int main() {
-    Proceso p("proceso1.txt");
-    p.siguienteInstruccion();
-    return 0;
+    MyReadFile.close();
+}
+
+int Proceso::getPID(){
+    return pid;
 }
