@@ -21,11 +21,53 @@ bool Proceso::instruccionesPendientes() {
 
 void Proceso::siguienteInstruccion() {
     // cout << instrucciones.size() << endl;
+    std::cout<<"AX: "<<ax<<" Bx: "<<bx<<" Cx: "<<cx<<endl;
+
     if (!instrucciones.empty()) {
-        cout << "Ejecutando instrucción: " << instrucciones.front() << endl;
+        string cabeza = instrucciones.front();
+        std::cout << "Ejecutando instrucción: " << cabeza << endl;
+        
+        stringstream ss(cabeza);
+        string instruccion;
+
+        ss>> instruccion;
+
+        string valor1, valor2;
+        int* elementos[3] = {&ax, &bx, &cx};
+        if (instruccion == "ADD") {
+            ss >> valor1;
+            ss >> valor2;
+            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            *elementos[variable1] += *elementos[variable2];
+            
+        } 
+        else if (instruccion == "SUB") {
+            ss >> valor1;
+            ss >> valor2;
+            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            *elementos[variable1] -= *elementos[variable2];
+        }
+        else if (instruccion == "INC") {
+            ss >> valor1;
+            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            *elementos[variable1] += 1;
+        }
+        else if (instruccion == "MUL") {
+            ss >> valor1;
+            ss >> valor2;
+            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
+            *elementos[variable1] -= *elementos[variable2];
+        }
+        
+        
         instrucciones.pop();
+
     }
 }
+
 
 void Proceso::guardarContexto() {
     string ramAddress = "data"+to_string(pid)+".bin";

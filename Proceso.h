@@ -7,8 +7,11 @@
 
 using namespace std;
 
+// instrucciones va a ser un vector, PC va a ser un puntero a la siguiente instruccion, es el iterador
+
 class Proceso {
     int pid;
+    // vector<string>::iterator
     int pc; // Program Counter simulado
     int ax, bx, cx; // Registros simulados
     int quantum;
