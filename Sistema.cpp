@@ -22,49 +22,42 @@ void cargarProcesos(unordered_map<int,Proceso>& procesos, vector<string>& archiv
 
 int main(){
 
-    // CPU cpu;
-    // vector<string> archivosProcesos;
-    // cout<<"procplanner - Simulación de planificación de procesos."<<endl;
-    // cout<<"para ejecutar escribe run"<<endl;
+    CPU cpu;
+    vector<string> archivosProcesos;
+    cout<<"procplanner - Simulación de planificación de procesos."<<endl;
+    cout<<"para ejecutar escribe run"<<endl;
     
     
-    // string input; 
-    // do{
-    //     cout<<"escribe el documento que tiene las instrucciones de un proceso"<<endl;
-    //     cin>>input;
-    //     if(input =="run")break;
-    //     input = "procesos/"+input;
-    //     archivosProcesos.push_back(input);
-    // }while(input!="run");
+    string input; 
+    do{
+        cout<<"escribe el documento que tiene las instrucciones de un proceso"<<endl;
+        cin>>input;
+        if(input =="run")break;
+        input = "procesos/"+input;
+        archivosProcesos.push_back(input);
+    }while(input!="run");
 
     // for(string s:archivosProcesos) cout<<s<<endl;
     
-
-    // queue<int> roundRobin;
-    // unordered_map<int,Proceso> procesos;
-    // cargarProcesos(procesos,archivosProcesos,roundRobin);
-
-    // while(!roundRobin.empty()){
-    //     Proceso procesoTemp = procesos[roundRobin.front()];
-    //     roundRobin.pop();
-        
-    //     int quantum = procesoTemp.getQuantum();
-    //     int ID = procesoTemp.getPID();
-    //     for(int i = 0; i< quantum;i++){
-    //         if(!procesoTemp.instruccionesPendientes()) break;
-    //         cpu.correr(procesos[ID]);
-    //     }
-    //     if(procesoTemp.instruccionesPendientes()) roundRobin.push(procesoTemp.getPID());
-    // }
     
-    // return 0;
+    queue<int> roundRobin;
+    unordered_map<int,Proceso> procesos;
+    cargarProcesos(procesos,archivosProcesos,roundRobin);
 
-    Proceso p("procesos/proceso1.txt");
-    p.siguienteInstruccion();
-    p.siguienteInstruccion();
-    p.siguienteInstruccion();
-    p.siguienteInstruccion();
-    p.siguienteInstruccion();
+    while(!roundRobin.empty()){
+        Proceso procesoTemp = procesos[roundRobin.front()];
+        roundRobin.pop();
+        
+        int quantum = procesoTemp.getQuantum();
+        int ID = procesoTemp.getPID();
+        for(int i = 0; i< quantum;i++){
+            if(!procesoTemp.instruccionesPendientes()) break;
+            cpu.correr(procesos[ID]);
+        }
+        if(procesoTemp.instruccionesPendientes()) roundRobin.push(procesoTemp.getPID());
+    }
+    
+    return 0;
 
 
 }

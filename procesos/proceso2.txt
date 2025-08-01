@@ -1,5 +1,5 @@
-PID: 2, AX=2, BX=3, CX=12, Quantum=1
-ADD AX, BX
-INC AX
-NOP
-SUB CX, 1
+PID: 2, AX=12, BX=3, CX=3, Quantum=2
+INC CX 
+SUB AX, 3
+NOP 
+MUL CX,  AX

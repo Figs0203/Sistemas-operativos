@@ -15,7 +15,7 @@ main.o: main.cpp Proceso.h CPU.h
 Proceso.o: Proceso.cpp Proceso.h
 	$(CXX) $(CXXFLAGS) -c Proceso.cpp
 
-CPU.o: CPU.cpp CPU.h
+CPU.o:
 	$(CXX) $(CXXFLAGS) -c CPU.cpp
 
 clean:
