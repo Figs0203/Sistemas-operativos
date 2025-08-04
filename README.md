@@ -24,7 +24,7 @@ Sistemas-operativos/
 │   ├── proceso1.txt
 │   ├── proceso2.txt
 │   └── proceso3.txt
-└── RAM/                  # Almacenamiento de contexto (no implementado)
+└── RAM/                  # Almacenamiento de contexto
 ```
 
 ## Funcionamiento
