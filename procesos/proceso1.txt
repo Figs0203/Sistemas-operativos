@@ -1,6 +1,0 @@
-PID: 1, AX=6, BX=2, CX=3, Quantum=1
-ADD AX, CX
-INC BX
-SUB AX, BX
-NOP      
-MUL BX, AX

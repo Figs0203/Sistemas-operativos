@@ -14,7 +14,8 @@ Proceso::Proceso() {
 }
 
 Proceso::Proceso(string nombreArchivo) {
-    cargarInstrucciones(nombreArchivo);
+    cargarInformacion(nombreArchivo);
+    cargarInstrucciones();
     pc = 0;
 }
 
@@ -29,6 +30,62 @@ void Proceso::siguienteInstruccion() {
  
 
 }
+
+void Proceso::cargarInformacion(string linea) {
+    int* elementos[5] = {&pid, &ax, &bx, &cx, &quantum};
+
+    smatch match;
+    string patrones[5] = {R"(PID:\s*(\d+))",R"(AX=\s*(\d+))",R"(BX=\s*(\d+))",R"(CX=\s*(\d+))",R"(Quantum=\s*(\d+))"};
+
+    for (int i = 0; i < 5; i++) {
+        regex patron(patrones[i]);
+        if (regex_search(linea, match, patron)) {
+            *elementos[i] = stoi(match[1]);
+            // cout << match[1] << endl;
+        } else {
+            cout << "Instrucciones ingresadas erróneamente" << endl;
+            break;
+        }
+    }
+
+    estado = "Ready";
+    
+    fstream file("procesos/1.txt");
+    string line;
+    if(!file) return;
+
+    while(getline(file,line)){
+        instrucciones.push_back(line);
+    }
+}
+
+
+int Proceso::getPID(){
+    return pid;
+}
+
+int Proceso::getQuantum(){
+    return quantum;
+}
+
+vector<int*> Proceso::getElementos(){
+    return  {&ax, &bx, &cx};
+}
+
+string Proceso::getInstruccion(){
+    string temp = instrucciones[pc];
+    pc = pc+1;
+    return temp;
+}
+
+void Proceso::setEstado(string estado_input){
+    estado = estado_input;
+}
+
+string Proceso::getEstado(){
+    return estado;
+}
+
 
 //Guardar en binario
 void Proceso::guardarContexto() {
@@ -102,62 +159,4 @@ void Proceso::cargarContexto() {
 
     // archivo.close();
     // cout<<"contexto cargado"<<endl;
-}
-
-void Proceso::cargarInstrucciones(string nombreArchivo) {
-    string linea;
-    ifstream MyReadFile(nombreArchivo);
-    bool primeraLinea = true;
-    int* elementos[5] = {&pid, &ax, &bx, &cx, &quantum};
-
-    while (getline(MyReadFile, linea)) {
-        if (primeraLinea) {
-            smatch match;
-            string patrones[5] = {R"(PID:\s*(\d+))",R"(AX=\s*(\d+))",R"(BX=\s*(\d+))",R"(CX=\s*(\d+))",R"(Quantum=\s*(\d+))"};
-
-            for (int i = 0; i < 5; i++) {
-                regex patron(patrones[i]);
-                if (regex_search(linea, match, patron)) {
-                    *elementos[i] = stoi(match[1]);
-                    // cout << match[1] << endl;
-                } else {
-                    cout << "Instrucciones ingresadas erróneamente" << endl;
-                    break;
-                }
-            }
-            estado = "Listo";
-            primeraLinea = false;
-            continue;
-        }
-        // cout<<pid<<endl;
-        instrucciones.push_back(linea);
-    }
-
-    MyReadFile.close();
-}
-
-int Proceso::getPID(){
-    return pid;
-}
-
-int Proceso::getQuantum(){
-    return quantum;
-}
-
-vector<int*> Proceso::getElementos(){
-    return  {&ax, &bx, &cx};
-}
-
-string Proceso::getInstruccion(){
-    string temp = instrucciones[pc];
-    pc = pc+1;
-    return temp;
-}
-
-void Proceso::setEstado(string estado_input){
-    estado = estado_input;
-}
-
-string Proceso::getEstado(){
-    return estado;
 }

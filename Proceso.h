@@ -24,7 +24,8 @@ public:
     void siguienteInstruccion();
     void guardarContexto();
     void cargarContexto();
-    void cargarInstrucciones(std::string nombreArchivo);
+    void cargarInformacion(std::string nombreArchivo);
+    void cargarInstrucciones();
     int getPID();
     int getQuantum();
     vector<int*> getElementos();
