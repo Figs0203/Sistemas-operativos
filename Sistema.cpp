@@ -16,6 +16,7 @@ int main(){
     vector<string> archivosProcesos;
     cout<<"procplanner - Simulación de planificación de procesos."<<endl;
 
+
     ifstream file("procesos/procesos.txt");
     if (!file) {
         cout << "Error abriendo archivo!" << endl;
@@ -25,20 +26,16 @@ int main(){
     queue<int> roundRobin;
     unordered_map<int,Proceso> procesos;
     string line;
+
     while (getline(file, line)) { 
         cout << line << endl;
 
         Proceso p(line);
-        p.cargarInstrucciones();
         procesos[p.getPID()] = p;
         roundRobin.push(p.getPID());
     }
 
     file.close();
-
-
-
-    
 
     while(!roundRobin.empty()){
         Proceso &procesoTemp = procesos[roundRobin.front()];

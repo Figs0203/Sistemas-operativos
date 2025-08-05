@@ -15,7 +15,6 @@ Proceso::Proceso() {
 
 Proceso::Proceso(string nombreArchivo) {
     cargarInformacion(nombreArchivo);
-    cargarInstrucciones();
     pc = 0;
 }
 
@@ -24,12 +23,6 @@ bool Proceso::instruccionesPendientes() {
     return pc != (int) instrucciones.size();
 }
 
-
-
-void Proceso::siguienteInstruccion() {
- 
-
-}
 
 void Proceso::cargarInformacion(string linea) {
     int* elementos[5] = {&pid, &ax, &bx, &cx, &quantum};
@@ -47,16 +40,18 @@ void Proceso::cargarInformacion(string linea) {
             break;
         }
     }
-
-    estado = "Ready";
     
-    fstream file("procesos/1.txt");
+    // return;
+    string filename = "procesos/"+to_string(pid)+".txt";
+    fstream file(filename);
     string line;
     if(!file) return;
 
     while(getline(file,line)){
         instrucciones.push_back(line);
     }
+
+    estado = "Ready";
 }
 
 

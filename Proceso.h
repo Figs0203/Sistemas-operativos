@@ -21,7 +21,6 @@ public:
     Proceso();
     Proceso(string nombreArchivo);
     bool instruccionesPendientes();
-    void siguienteInstruccion();
     void guardarContexto();
     void cargarContexto();
     void cargarInformacion(std::string nombreArchivo);
