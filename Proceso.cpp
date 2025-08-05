@@ -23,93 +23,11 @@ bool Proceso::instruccionesPendientes() {
     return pc != (int) instrucciones.size();
 }
 
-bool isNumber(const std::string& str) {
-    for (char c : str) {
-        if (!isdigit(c)) return false;
-    }
-    return true;
-}
+
 
 void Proceso::siguienteInstruccion() {
  
-    if (!instruccionesPendientes()) return;
-    
-    string cabeza = instrucciones[pc];
-    std::cout << "Ejecutando instrucción: " << cabeza<< " en el Proceso"<< pid << endl;
-    std::cout<<"AX: "<<ax<<" Bx: "<<bx<<" Cx: "<<cx<<endl;
-        
-        stringstream ss(cabeza);
-        string instruccion;
 
-        ss>> instruccion;
-
-        string valor1, valor2;
-        int* elementos[3] = {&ax, &bx, &cx};
-        ss >> valor1;
-
-        if (instruccion == "ADD") {
-            ss >> valor2;
-            if(isNumber(valor2)){
-                int variable1 = valor1[0] - 'A';
-                *elementos[variable1] += stoi(valor2);
-
-            }
-            else{
-                int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-                int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-                *elementos[variable1] += *elementos[variable2];
-
-            }
-            
-        } 
-        else if (instruccion == "SUB") {    
-            ss >> valor2;
-            if(isNumber(valor2)){
-                int variable1 = valor1[0] - 'A';
-                *elementos[variable1] -= stoi(valor2);
-
-            }
-            else{
-                int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-                int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-                *elementos[variable1] -= *elementos[variable2];
-
-            }
-        }
-        else if (instruccion == "INC") {
-            int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-            *elementos[variable1] += 1;
-        }
-
-        else if (instruccion == "MUL") {
-            ss >> valor2;
-            if(isNumber(valor2)){
-                int variable1 = valor1[0] - 'A';
-                *elementos[variable1] *= stoi(valor2);
-
-            }
-            else{
-                int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-                int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-                *elementos[variable1] *= *elementos[variable2];
-
-            }
-        }else if (instruccion == "JMP") {
-            int salto;
-            if(isNumber(valor1)){
-                salto = stoi(valor1);
-            }
-            if (salto >= 0 && salto < (int) instrucciones.size()) {
-                pc = salto;
-            } else {
-                // Manejo de error: salto fuera de rango
-                std::cout << "Salto fuera de rango: " << salto << std::endl;
-            }
-
-        }
-        std::cout<<"AX: "<<ax<<" Bx: "<<bx<<" Cx: "<<cx<<endl;
-        pc+=1;
-    
 }
 
 //Guardar en binario
@@ -224,4 +142,22 @@ int Proceso::getPID(){
 
 int Proceso::getQuantum(){
     return quantum;
+}
+
+vector<int*> Proceso::getElementos(){
+    return  {&ax, &bx, &cx};
+}
+
+string Proceso::getInstruccion(){
+    string temp = instrucciones[pc];
+    pc = pc+1;
+    return temp;
+}
+
+void Proceso::setEstado(string estado_input){
+    estado = estado_input;
+}
+
+string Proceso::getEstado(){
+    return estado;
 }

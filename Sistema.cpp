@@ -45,16 +45,16 @@ int main(){
     cargarProcesos(procesos,archivosProcesos,roundRobin);
 
     while(!roundRobin.empty()){
-        Proceso procesoTemp = procesos[roundRobin.front()];
+        Proceso &procesoTemp = procesos[roundRobin.front()];
         roundRobin.pop();
-        
+
         int quantum = procesoTemp.getQuantum();
-        int ID = procesoTemp.getPID();
+        
         for(int i = 0; i< quantum;i++){
-            if(!procesoTemp.instruccionesPendientes()) break;
-            cpu.correr(procesos[ID]);
+            if(procesoTemp.getEstado()=="Finished") break;
+            cpu.correr(procesoTemp);
         }
-        if(procesoTemp.instruccionesPendientes()) roundRobin.push(procesoTemp.getPID());
+        if(procesoTemp.getEstado()!="Finished") roundRobin.push(procesoTemp.getPID());
     }
     
     return 0;

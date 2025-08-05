@@ -27,6 +27,10 @@ public:
     void cargarInstrucciones(std::string nombreArchivo);
     int getPID();
     int getQuantum();
+    vector<int*> getElementos();
+    string getInstruccion();
+    void setEstado(string estado_input);
+    string getEstado();
 };
 
 #endif

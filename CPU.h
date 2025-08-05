@@ -8,7 +8,7 @@ using namespace std;
 class CPU{
 
     public:
-    void correr(Proceso& proceso);
+    void correr(Proceso &proceso);
 
 
 };
