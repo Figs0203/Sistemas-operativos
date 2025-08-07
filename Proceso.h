@@ -4,6 +4,8 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <unordered_map>
+#include <map>
 
 using namespace std;
 
@@ -12,7 +14,8 @@ using namespace std;
 class Proceso {
     int pid;
     int pc; // Program Counter simulado
-    int ax, bx, cx; // Registros simulados
+    map<string,int> registros;
+    int a,b,c;
     int quantum;
     string estado; // "Listo", "Ejecutando", "Terminado"
     vector<string> instrucciones;
@@ -27,7 +30,7 @@ public:
     void cargarInstrucciones();
     int getPID();
     int getQuantum();
-    vector<int*> getElementos();
+    map<string,int>& getElementos();
     string getInstruccion();
     void setEstado(string estado_input);
     string getEstado();

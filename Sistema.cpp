@@ -29,13 +29,14 @@ int main(){
 
     while (getline(file, line)) { 
         cout << line << endl;
-
         Proceso p(line);
         procesos[p.getPID()] = p;
         roundRobin.push(p.getPID());
     }
 
     file.close();
+
+    return 0;
 
     while(!roundRobin.empty()){
         Proceso &procesoTemp = procesos[roundRobin.front()];

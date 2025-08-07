@@ -24,34 +24,44 @@ bool Proceso::instruccionesPendientes() {
 }
 
 
+vector<string> splitString(string entrada, char separador){
+    vector<string> salida;
+    stringstream ss(entrada);
+    string temporal;
+    while(getline(ss,temporal,separador)) salida.push_back(temporal);
+    return salida;
+}
+
+
 void Proceso::cargarInformacion(string linea) {
-    int* elementos[5] = {&pid, &ax, &bx, &cx, &quantum};
 
+    // separar la linea por comas
+    vector<string> info = splitString(linea,',');
+
+    // conseguir el pid dentro del input
     smatch match;
-    string patrones[5] = {R"(PID:\s*(\d+))",R"(AX=\s*(\d+))",R"(BX=\s*(\d+))",R"(CX=\s*(\d+))",R"(Quantum=\s*(\d+))"};
+    regex patron_pid(R"(PID:\s*(\d+))");
 
-    for (int i = 0; i < 5; i++) {
-        regex patron(patrones[i]);
-        if (regex_search(linea, match, patron)) {
-            *elementos[i] = stoi(match[1]);
-            // cout << match[1] << endl;
-        } else {
-            cout << "Instrucciones ingresadas erróneamente" << endl;
-            break;
-        }
-    }
+    if (regex_search(info[0], match, patron_pid)) pid = stoi(match[1]);
+    else cout << "Instrucciones ingresadas erróneamente" << endl;
     
-    // return;
-    string filename = "procesos/"+to_string(pid)+".txt";
-    fstream file(filename);
-    string line;
-    if(!file) return;
+    // conseguir quantum dentro del input
+    regex patron_Quantum(R"(Quantum=\s*(\d+))");
 
-    while(getline(file,line)){
-        instrucciones.push_back(line);
+    if (regex_search(info[info.size()-1], match, patron_Quantum)) pid = stoi(match[1]);
+    else cout << "Instrucciones ingresadas erróneamente" << endl;
+
+    // registrar registros en el diccionario
+    for(int i =1;i<(int)info.size()-1;i++){
+        vector<string> registro = splitString(info[i],'=');
+        string key =registro[0];
+        key.erase(std::remove(key.begin(), key.end(), ' '), key.end());
+        string value =registro[1];
+        value.erase(std::remove(value.begin(), value.end(), ' '), value.end());
+        // cout<<key<<" "<<value<<endl;;
+        registros[key] = stoi(value); 
     }
 
-    estado = "Ready";
 }
 
 
@@ -63,8 +73,8 @@ int Proceso::getQuantum(){
     return quantum;
 }
 
-vector<int*> Proceso::getElementos(){
-    return  {&ax, &bx, &cx};
+map<string,int>& Proceso::getElementos(){
+    return  registros;
 }
 
 string Proceso::getInstruccion(){
