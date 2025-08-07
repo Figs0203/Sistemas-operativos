@@ -23,32 +23,28 @@ int main(){
         return 0;
     }
     
-    queue<int> roundRobin;
-    unordered_map<int,Proceso> procesos;
+    queue<Proceso> roundRobin;
     string line;
 
     while (getline(file, line)) { 
         cout << line << endl;
         Proceso p(line);
-        procesos[p.getPID()] = p;
-        roundRobin.push(p.getPID());
+        roundRobin.push(p);
     }
 
     file.close();
 
-    return 0;
-
     while(!roundRobin.empty()){
-        Proceso &procesoTemp = procesos[roundRobin.front()];
+        Proceso& procesoTemp = roundRobin.front();
         roundRobin.pop();
 
-        int quantum = procesoTemp.getQuantum();
+        // int quantum = procesoTemp.getQuantum();
         
-        for(int i = 0; i< quantum;i++){
-            if(procesoTemp.getEstado()=="Finished") break;
-            cpu.correr(procesoTemp);
-        }
-        if(procesoTemp.getEstado()!="Finished") roundRobin.push(procesoTemp.getPID());
+        // for(int i = 0; i< quantum;i++){
+        //     if(procesoTemp.getEstado()=="Finished") break;
+            // cpu.correr(procesoTemp);
+        // }
+        // if(procesoTemp.getEstado()!="Finished") roundRobin.push(procesoTemp);
     }
     
     return 0;

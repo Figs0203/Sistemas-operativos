@@ -9,12 +9,12 @@ using namespace std;
 
 
 
-Proceso::Proceso() {
-   
+Proceso::Proceso() {  
 }
 
 Proceso::Proceso(string nombreArchivo) {
     cargarInformacion(nombreArchivo);
+    cargarInstrucciones();
     pc = 0;
 }
 
@@ -24,7 +24,8 @@ bool Proceso::instruccionesPendientes() {
 }
 
 
-vector<string> splitString(string entrada, char separador){
+
+vector<string> Proceso::splitString(string entrada, char separador){
     vector<string> salida;
     stringstream ss(entrada);
     string temporal;
@@ -54,14 +55,38 @@ void Proceso::cargarInformacion(string linea) {
     // registrar registros en el diccionario
     for(int i =1;i<(int)info.size()-1;i++){
         vector<string> registro = splitString(info[i],'=');
-        string key =registro[0];
-        key.erase(std::remove(key.begin(), key.end(), ' '), key.end());
-        string value =registro[1];
-        value.erase(std::remove(value.begin(), value.end(), ' '), value.end());
+        string key = registro[0];
+        key.erase(remove(key.begin(), key.end(), ' '), key.end());
+        string value = registro[1];
+        value.erase(remove(value.begin(), value.end(), ' '), value.end());
         // cout<<key<<" "<<value<<endl;;
         registros[key] = stoi(value); 
     }
 
+}
+
+void Proceso::cargarInstrucciones() {
+    // Construir el nombre del archivo basado en el PID
+    string nombreArchivo = "procesos/" + to_string(pid) + ".txt";
+    ifstream archivo(nombreArchivo);
+    if (!archivo) {
+        cerr << "Error: No se pudo abrir el archivo " << nombreArchivo << endl;
+        return;
+    }
+    string linea;
+    // Leer cada línea del archivo y agregarla al vector de instrucciones
+    while (getline(archivo, linea)) {
+        // Eliminar espacios en blanco al inicio y final de la línea
+        linea.erase(0, linea.find_first_not_of(" \t\r\n"));
+        linea.erase(linea.find_last_not_of(" \t\r\n") + 1);
+        // Solo agregar líneas que no estén vacías
+        if (!linea.empty()) {
+            instrucciones.push_back(linea);
+        }
+    }
+    archivo.close();
+    cout << "Instrucciones cargadas para Proceso " << pid << " desde " << nombreArchivo << endl;
+    cout<<endl;
 }
 
 
@@ -78,6 +103,7 @@ map<string,int>& Proceso::getElementos(){
 }
 
 string Proceso::getInstruccion(){
+    // if(pc>=instrucciones.size()) 
     string temp = instrucciones[pc];
     pc = pc+1;
     return temp;
@@ -92,76 +118,10 @@ string Proceso::getEstado(){
 }
 
 
-//Guardar en binario
-void Proceso::guardarContexto() {
-    // string ramAddress = "data"+to_string(pid)+".bin";
-    // ofstream archivo(ramAddress, ios::binary);
-    // if (!archivo) {
-    //     cerr << "No se pudo abrir el archivo." << endl;
-    //     return;
-    // }
-
-    // archivo.write(reinterpret_cast<char*>(&pid), sizeof(pid));
-    // archivo.write(reinterpret_cast<char*>(&pc), sizeof(pc));
-    // archivo.write(reinterpret_cast<char*>(&ax), sizeof(ax));
-    // archivo.write(reinterpret_cast<char*>(&bx), sizeof(bx));
-    // archivo.write(reinterpret_cast<char*>(&cx), sizeof(cx));
-    // archivo.write(reinterpret_cast<char*>(&quantum), sizeof(quantum));
-
-    // size_t lenEstado = estado.size();
-    // archivo.write(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
-    // archivo.write(estado.c_str(), lenEstado);
-
-    // size_t numInstrucciones = instrucciones.size();
-    // archivo.write(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
-    
-    // int iterador = 0; //Mirar opción de usar un for each
-    // while (iterador < instrucciones.size()) {
-    //     string instr = instrucciones[iterador];
-        
-    //     size_t lenInstr = instr.size();
-    //     archivo.write(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
-    //     archivo.write(instr.c_str(), lenInstr);
-    //     iterador++;
-    // }
-
-    // archivo.close();
-    // cout<<"contexto guardado"<<endl;
+int& Proceso::getPC(){
+    return pc;
 }
 
-//Cargar binario
-void Proceso::cargarContexto() {
-    // ifstream archivo("data.bin", ios::binary);
-    // if (!archivo) {
-    //     cerr << "No se pudo abrir el archivo para lectura." << endl;
-    //     return;
-    // }
-
-    // archivo.read(reinterpret_cast<char*>(&pid), sizeof(pid));
-    // archivo.read(reinterpret_cast<char*>(&pc), sizeof(pc));
-    // archivo.read(reinterpret_cast<char*>(&ax), sizeof(ax));
-    // archivo.read(reinterpret_cast<char*>(&bx), sizeof(bx));
-    // archivo.read(reinterpret_cast<char*>(&cx), sizeof(cx));
-    // archivo.read(reinterpret_cast<char*>(&quantum), sizeof(quantum));
-
-    // size_t lenEstado;
-    // archivo.read(reinterpret_cast<char*>(&lenEstado), sizeof(lenEstado));
-    // estado.resize(lenEstado);
-    // archivo.read(&estado[0], lenEstado);
-    
-    // instrucciones.clear();
-
-    // size_t numInstrucciones;
-    // archivo.read(reinterpret_cast<char*>(&numInstrucciones), sizeof(numInstrucciones));
-
-    // for (size_t i = 0; i < numInstrucciones; i++) {
-    //     size_t lenInstr;
-    //     archivo.read(reinterpret_cast<char*>(&lenInstr), sizeof(lenInstr));
-    //     string instr(lenInstr, '\0');
-    //     archivo.read(&instr[0], lenInstr);
-    //     instrucciones.push_back(instr);
-    // }
-
-    // archivo.close();
-    // cout<<"contexto cargado"<<endl;
+void Proceso::setPC(int n){
+    pc = n;
 }

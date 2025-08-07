@@ -12,6 +12,8 @@ using namespace std;
 // instrucciones va a ser un vector, PC va a ser un puntero a la siguiente instruccion, es el iterador
 
 class Proceso {
+
+private:
     int pid;
     int pc; // Program Counter simulado
     map<string,int> registros;
@@ -34,6 +36,11 @@ public:
     string getInstruccion();
     void setEstado(string estado_input);
     string getEstado();
+
+    int& getPC();
+    void setPC(int n);
+
+    vector<string> splitString(string entrada, char separador);
 };
 
 #endif

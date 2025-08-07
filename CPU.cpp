@@ -2,10 +2,10 @@
 #include "Proceso.h"
 #include "CPU.h"
 #include <sstream>
-
+#include <string>
 using namespace std;
 
-bool isNumber(const std::string& str) {
+bool isNumber(const string& str) {
     for (char c : str) {
         if (!isdigit(c)) return false;
     }
@@ -13,89 +13,80 @@ bool isNumber(const std::string& str) {
 }
 
 
+vector<string> splitString(string entrada, char separador){
+    vector<string> salida;
+    stringstream ss(entrada);
+    string temporal;
+    while(getline(ss,temporal,separador)) salida.push_back(temporal);
+    return salida;
+}
 
-void CPU::correr(Proceso &proceso){
-
-    // vector<int*> elementos = proceso.getElementos();
-    // string instrucciones = proceso.getInstruccion();
-    // proceso.setEstado("Running");
 
 
-    // std::cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado() << endl;
-    // std::cout<<"AX: "<<*elementos[0]<<" Bx: "<<*elementos[1]<<" Cx: "<<*elementos[2]<<endl;
+void CPU::correr(Proceso& proceso){
 
-    // stringstream ss(instrucciones);
-    // string instruccion;
-    // ss>> instruccion;
-    // string valor1, valor2;
-    // ss >> valor1;
+    map<string,int>& elementos = proceso.getElementos();
+    string instrucciones = proceso.getInstruccion();
+    proceso.setEstado("Running");
 
-    // if (instruccion == "ADD") {
-    //     ss >> valor2;
-    //     if(isNumber(valor2)){
-    //         int variable1 = valor1[0] - 'A';
-    //         *elementos[variable1] += stoi(valor2);
 
-    //     }
-    //     else{
-    //         int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //         int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //         *elementos[variable1] += *elementos[variable2];
+    cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado() << endl;
+    for(pair<string,int> p:elementos)cout<<p.first<<" "<<p.second<<" ";
+    cout<<endl;
 
-    //     }
-        
-    // } 
-    // else if (instruccion == "SUB") {    
-    //     ss >> valor2;
-    //     if(isNumber(valor2)){
-    //         int variable1 = valor1[0] - 'A';
-    //         *elementos[variable1] -= stoi(valor2);
-
-    //     }
-    //     else{
-    //         int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //         int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //         *elementos[variable1] -= *elementos[variable2];
-
-    //     }
-    // }
-    // else if (instruccion == "INC") {
-    //     int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //     *elementos[variable1] += 1;
-    // }
-
-    // else if (instruccion == "MUL") {
-    //     ss >> valor2;
-    //     if(isNumber(valor2)){
-    //         int variable1 = valor1[0] - 'A';
-    //         *elementos[variable1] *= stoi(valor2);
-
-    //     }
-    //     else{
-    //         int variable1 = valor1[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //         int variable2 = valor2[0] - 'A'; // Convertir 'A', 'B', 'C' a 0, 1, 2
-    //         *elementos[variable1] *= *elementos[variable2];
-
-    //     }
-    // }else if (instruccion == "JMP") {
-    //     int salto;
-    //     if(isNumber(valor1)){
-    //     salto = stoi(valor1);
-    // }
-    // if (salto >= 0 ) {
-    //     // pc = salto;
-    // } else {
-    //     // Manejo de error: salto fuera de rango
-    //     std::cout << "Salto fuera de rango: " << salto << std::endl;
-    // }
-
-    // }
+    stringstream ss(instrucciones);
+    string instruccion;
+    ss>> instruccion;
     
-    // if(!proceso.instruccionesPendientes()) proceso.setEstado("Finished");
-    // else proceso.setEstado("Ready");
+    string temp;
+    getline(ss, temp);
+    vector<string> variables = splitString(temp, ',');
+   
+      // quitar espacios
+    for (string& s : variables) {
+        s.erase(0, s.find_first_not_of(" "));
+        s.erase(s.find_last_not_of(" ") + 1);
+    }
 
-    // std::cout<<"AX: "<<*elementos[0]<<" Bx: "<<*elementos[1]<<" Cx: "<<*elementos[2]<< " Estado: "<<proceso.getEstado() << endl<<endl;
-        
+    // ADD
+    if (instruccion == "ADD") {
+        int& valor1 = elementos[variables[0]];
+        string valor2 = variables[1];
+        if(isNumber(valor2)) valor1 += stoi(valor2);
+        else valor1 += elementos[valor2];
+    } 
+
+    // SUB
+    else if (instruccion == "SUB") {
+        int& valor1 = elementos[variables[0]];
+        string valor2 = variables[1];
+        if(isNumber(valor2)) valor1 -= stoi(valor2);
+        else valor1 -= elementos[valor2];
+    }
+
+    // INC
+    else if (instruccion == "INC") {
+        int& valor = elementos[variables[0]];
+        valor++;
+    }
+
+    // MUL
+    else if (instruccion == "MUL") {
+        int& valor1 = elementos[variables[0]];
+        string valor2 = variables[1];
+        if(isNumber(valor2)) valor1 *= stoi(valor2);
+        else valor1 *= elementos[valor2];
+    }
+
+    // JM (simulado)
+    else if (instruccion == "JMP") {
+        int& destino = proceso.getPC();
+        destino = stoi(variables[0]);
+    }
+
+    // Mostrar resultado actualizado
+    for(pair<string,int> p:elementos) cout << p.first << " " << p.second << " ";
+    cout << endl;
         
     
 }
