@@ -48,8 +48,14 @@ int main(){
         for(int i = 0; i< quantum;i++){
             if(procesoTemp.getEstado()=="Finished") break;
             cpu.correr(procesoTemp);
+            for(pair<int,Proceso> pares: procesos) pares.second.writeLog();
+            ofstream logFile("output.log", ios::app);
+            logFile<<"----------------------"<<endl;
         }
+
+
         if(procesoTemp.getEstado()!="Finished") {roundRobin.push(pid);procesoTemp.setEstado("Ready");}
+
         
     }
     

@@ -15,6 +15,7 @@ Proceso::Proceso() {
 Proceso::Proceso(string nombreArchivo) {
     cargarInformacion(nombreArchivo);
     cargarInstrucciones();
+    estado = "Ready";
     pc = 0;
 }
 
@@ -129,6 +130,31 @@ string Proceso::getEstado(){
 
 void Proceso::setEstado(string estado_input){
     estado = estado_input;
+}
+
+
+void Proceso:: writeLog(){
+
+        // guardando datos en .log
+
+
+        ofstream logFile("output.log", ios::app); // use std::ios::app to append to the file
+
+        if (!logFile) {
+            cout << "Failed to open log file!" << endl;
+            return;
+        }
+
+        // escribir los datos
+        logFile<<"PID:"<<pid<<" Quantum: "<<quantum<<" Estado: "<<estado<<endl;
+
+        for(pair<string,int> p: registros)logFile<<p.first<<" "<<p.second<<" ";
+        logFile<<endl;
+
+
+        logFile.close();
+
+        // cout << "Log written successfully.\n";
 }
 
 

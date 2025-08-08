@@ -18,6 +18,6 @@ CPU.o: CPU.cpp CPU.h
 	$(CXX) $(CXXFLAGS) -c CPU.cpp
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f *.o $(EXEC) output.log
 
 .PHONY: clean

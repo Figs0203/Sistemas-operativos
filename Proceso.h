@@ -37,8 +37,9 @@ public:
     void setPC(int n);
     void setEstado(string estado_input);
     string getEstado();
-    
     vector<string> splitString(string entrada, char separador);
+
+    void writeLog();
 };
 
 #endif

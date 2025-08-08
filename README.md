@@ -20,15 +20,11 @@ Sistemas-operativos/
 ├── Proceso.h/Proceso.cpp  # Clase Proceso con registros y instrucciones
 ├── Sistema.cpp            # Lógica principal del simulador
 ├── makefile              # Configuración de compilación
-├── procesos/             # Archivos de procesos
-│   ├── procesos.txt      # Lista de procesos a cargar
-│   ├── 1.txt            # Instrucciones del proceso 1
-│   ├── 2.txt            # Instrucciones del proceso 2
-│   └── 3.txt            # Instrucciones del proceso 3
-└── RAM/                  # Almacenamiento de contexto (archivos binarios)
-    ├── data1.bin
-    ├── data2.bin
-    └── data3.bin
+├── procesos/             # Archivos de procesos de ejemplo
+│   ├── proceso1.txt
+│   ├── proceso2.txt
+│   └── proceso3.txt
+└── RAM/                  # Almacenamiento de contexto
 ```
 
 ## Funcionamiento
@@ -55,25 +51,21 @@ El simulador reconoce las siguientes instrucciones de máquina:
 - `JMP 3` - Salta a la instrucción en la posición 3
 - `NOP` - No hace nada (instrucción vacía)
 
-### Formato de Archivos
+### Formato de Archivos de Proceso
 
-#### Archivo procesos.txt
-Contiene la lista de procesos a cargar con el siguiente formato:
-```
-PID:1,AX=10,BX=5,Quantum=1
-PID:2,AX=12,BX=3,CX=3,Quantum=1
-PID:3, AX=2, BX=3, CX=12,Quantum=1
-```
+Cada archivo de proceso debe seguir un formato como el siguiente:
 
-#### Archivos de Instrucciones (1.txt, 2.txt, 3.txt)
-Cada archivo contiene las instrucciones a ejecutar para un proceso específico:
 ```
-ADD AX, 234
+PID: 1, AX=6, BX=2, CX=3, Quantum=1
+ADD AX, CX
 INC BX
 SUB AX, BX
 NOP
 MUL BX, AX
 ```
+
+- **Primera línea**: Metadatos del proceso (PID, registros iniciales, quantum)
+- **Líneas siguientes**: Instrucciones a ejecutar
 
 ## Compilación y Ejecución
 
@@ -107,28 +99,27 @@ g++ Sistema.o Proceso.o CPU.o -o simulador
    ./simulador
    ```
 
-3. **El programa automáticamente**:
-   - Lee el archivo `procesos/procesos.txt` para cargar los procesos
-   - Carga las instrucciones desde los archivos `procesos/1.txt`, `procesos/2.txt`, etc.
-   - Ejecuta la simulación Round Robin automáticamente
+3. **Durante la ejecución**:
+   - El programa te pedirá que ingreses los nombres de los archivos de procesos
+   - Escribe el nombre del archivo (ej: `proceso1.txt`)
+   - Cuando hayas ingresado todos los procesos, escribe `run` para comenzar la simulación
 
-### Ejemplo de Salida
+### Ejemplo de Uso
 
-```
+```bash
+$ ./simulador
 procplanner - Simulación de planificación de procesos.
-
-PID:1,AX=10,BX=5,Quantum=1
-PID:2,AX=12,BX=3,CX=3,Quantum=1
-PID:3, AX=2, BX=3, CX=12,Quantum=1
-Instrucciones cargadas para Proceso 1 desde procesos/1.txt
-
-Instrucciones cargadas para Proceso 2 desde procesos/2.txt
-
-Instrucciones cargadas para Proceso 3 desde procesos/3.txt
-
-Ejecutando instrucción: ADD AX, 234 en el Proceso 1 Estado: Running
-AX 10 BX 5 
-AX 244 BX 5 
+para ejecutar escribe run
+escribe el documento que tiene las instrucciones de un proceso
+proceso1.txt
+escribe el documento que tiene las instrucciones de un proceso
+proceso2.txt
+escribe el documento que tiene las instrucciones de un proceso
+run
+Procesos cargados en "RAM"
+Ejecutando instrucción: ADD AX, CX en el Proceso1
+AX: 6 Bx: 2 Cx: 3
+AX: 9 Bx: 2 Cx: 3
 ...
 ```
 
@@ -139,22 +130,6 @@ AX 244 BX 5
 - **Estados de Proceso**: Listo, Ejecutando, Terminado
 - **Planificación Round Robin**: Distribución equitativa del tiempo de CPU
 - **Manejo de Errores**: Validación de saltos y operaciones
-- **Carga Automática**: Los procesos se cargan automáticamente desde archivos
-
-## Estructura de Datos
-
-### Clase Proceso
-- **PID**: Identificador único del proceso
-- **Registros**: Mapa con registros AX, BX, CX
-- **PC**: Contador de programa
-- **Quantum**: Tiempo asignado para ejecución
-- **Estado**: Estado actual del proceso (Ready, Running, Finished)
-- **Instrucciones**: Vector con las instrucciones a ejecutar
-
-### Clase CPU
-- **correr()**: Método principal que ejecuta una instrucción del proceso
-- **Parsing**: Análisis de instrucciones con soporte para registros y valores literales
-- **Ejecución**: Implementación de todas las operaciones aritméticas y de control
 
 ## Limpieza
 
@@ -169,5 +144,3 @@ make clean
 - El simulador está diseñado para fines educativos
 - Los procesos se ejecutan de forma secuencial en cada quantum
 - El sistema muestra el estado de los registros después de cada instrucción
-- Los archivos de instrucciones deben estar en la carpeta `procesos/`
-- El archivo `procesos.txt` define la configuración inicial de todos los procesos
