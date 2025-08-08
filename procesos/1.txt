@@ -1,6 +1,5 @@
 ADD AX, 234
-JMP 5
 INC BX
 SUB AX, BX
-NOP      
+NOP
 MUL BX, AX

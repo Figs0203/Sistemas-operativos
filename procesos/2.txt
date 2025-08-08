@@ -1,4 +1,4 @@
-INC CX 
+INC CX
 SUB AX, 3
 NOP 
 MUL CX,  AX

@@ -24,12 +24,20 @@ vector<string> splitString(string entrada, char separador){
 
 
 void CPU::correr(Proceso& proceso){
-
+// cargar las variables que van a ser modificadas dentro de la CPU
     map<string,int>& elementos = proceso.getElementos();
     string instrucciones = proceso.getInstruccion();
+    if(instrucciones == "Finished") {   
+        cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado() << endl;
+        for(pair<string,int> p:elementos)cout<<p.first<<" "<<p.second<<" ";
+        cout<<endl;cout<<endl;
+        return;
+    }
     proceso.setEstado("Running");
 
 
+
+// mostrar resultados iniciales
     cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado() << endl;
     for(pair<string,int> p:elementos)cout<<p.first<<" "<<p.second<<" ";
     cout<<endl;

@@ -15,6 +15,7 @@ int main(){
     CPU cpu;
     vector<string> archivosProcesos;
     cout<<"procplanner - Simulación de planificación de procesos."<<endl;
+    cout<<endl;
 
 
     ifstream file("procesos/procesos.txt");
@@ -23,28 +24,33 @@ int main(){
         return 0;
     }
     
-    queue<Proceso> roundRobin;
+    queue<int> roundRobin;
+    map<int,Proceso> procesos;
     string line;
 
     while (getline(file, line)) { 
         cout << line << endl;
         Proceso p(line);
-        roundRobin.push(p);
+        procesos[p.getPID()] = p;
+        roundRobin.push(p.getPID());
     }
+    // cpu.correr(procesos[1]);
 
     file.close();
 
     while(!roundRobin.empty()){
-        Proceso& procesoTemp = roundRobin.front();
+        int pid = roundRobin.front();
+        Proceso& procesoTemp = procesos[pid];
         roundRobin.pop();
+        int quantum = procesoTemp.getQuantum();
 
-        // int quantum = procesoTemp.getQuantum();
+        // cpu.correr(procesoTemp);
+        for(int i = 0; i< quantum;i++){
+            if(procesoTemp.getEstado()=="Finished") break;
+            cpu.correr(procesoTemp);
+        }
+        if(procesoTemp.getEstado()!="Finished") {roundRobin.push(pid);procesoTemp.setEstado("Ready");}
         
-        // for(int i = 0; i< quantum;i++){
-        //     if(procesoTemp.getEstado()=="Finished") break;
-            // cpu.correr(procesoTemp);
-        // }
-        // if(procesoTemp.getEstado()!="Finished") roundRobin.push(procesoTemp);
     }
     
     return 0;

@@ -18,21 +18,33 @@ Proceso::Proceso(string nombreArchivo) {
     pc = 0;
 }
 
+void Proceso::cargarInstrucciones() {
+    // Construir el nombre del archivo segun el PID
+    string nombreArchivo = "procesos/" + to_string(pid) + ".txt";
+    ifstream archivo(nombreArchivo);
+    if (!archivo) {
+        cerr << "Error: No se pudo abrir el archivo " << nombreArchivo << endl;
+        return;
+    }
+    string linea;
+    // Leer cada línea del archivo y agregarla al vector de instrucciones
+    while (getline(archivo, linea)) {
 
-bool Proceso::instruccionesPendientes() {
-    return pc != (int) instrucciones.size();
+        if (linea.empty()) continue; // salta líneas vacías o con espacios
+
+        // Eliminar espacios en blanco al inicio y final de la línea
+        linea.erase(0, linea.find_first_not_of(" "));
+        linea.erase(linea.find_last_not_of(" ") + 1);
+        // Solo agregar líneas que no estén vacías
+        if (!linea.empty()) {
+            instrucciones.push_back(linea);
+        }
+    }
+    archivo.close();
+    cout << "Instrucciones cargadas para Proceso " << pid << " desde " << nombreArchivo << endl;
+    cout<<endl;
+    // cout<<instrucciones[0].size()<<endl;    
 }
-
-
-
-vector<string> Proceso::splitString(string entrada, char separador){
-    vector<string> salida;
-    stringstream ss(entrada);
-    string temporal;
-    while(getline(ss,temporal,separador)) salida.push_back(temporal);
-    return salida;
-}
-
 
 void Proceso::cargarInformacion(string linea) {
 
@@ -49,7 +61,7 @@ void Proceso::cargarInformacion(string linea) {
     // conseguir quantum dentro del input
     regex patron_Quantum(R"(Quantum=\s*(\d+))");
 
-    if (regex_search(info[info.size()-1], match, patron_Quantum)) pid = stoi(match[1]);
+    if (regex_search(info[info.size()-1], match, patron_Quantum)) quantum = stoi(match[1]);
     else cout << "Instrucciones ingresadas erróneamente" << endl;
 
     // registrar registros en el diccionario
@@ -62,40 +74,21 @@ void Proceso::cargarInformacion(string linea) {
         // cout<<key<<" "<<value<<endl;;
         registros[key] = stoi(value); 
     }
+    
 
 }
 
-void Proceso::cargarInstrucciones() {
-    // Construir el nombre del archivo segun el PID
-    string nombreArchivo = "procesos/" + to_string(pid) + ".txt";
-    ifstream archivo(nombreArchivo);
-    if (!archivo) {
-        cerr << "Error: No se pudo abrir el archivo " << nombreArchivo << endl;
-        return;
-    }
-    string linea;
-    // Leer cada línea del archivo y agregarla al vector de instrucciones
-    while (getline(archivo, linea)) {
-        // Eliminar espacios en blanco al inicio y final de la línea
-        linea.erase(0, linea.find_first_not_of(" \t\r\n"));
-        linea.erase(linea.find_last_not_of(" \t\r\n") + 1);
-        // Solo agregar líneas que no estén vacías
-        if (!linea.empty()) {
-            instrucciones.push_back(linea);
-        }
-    }
-    archivo.close();
-    cout << "Instrucciones cargadas para Proceso " << pid << " desde " << nombreArchivo << endl;
-    cout<<endl;
+
+bool Proceso::instruccionesPendientes() {
+    return pc < (int) instrucciones.size();
 }
 
-
-int Proceso::getPID(){
-    return pid;
-}
-
-int Proceso::getQuantum(){
-    return quantum;
+vector<string> Proceso::splitString(string entrada, char separador){
+    vector<string> salida;
+    stringstream ss(entrada);
+    string temporal;
+    while(getline(ss,temporal,separador)) salida.push_back(temporal);
+    return salida;
 }
 
 map<string,int>& Proceso::getElementos(){
@@ -103,18 +96,21 @@ map<string,int>& Proceso::getElementos(){
 }
 
 string Proceso::getInstruccion(){
-    // if(pc>=instrucciones.size()) 
+    if(pc>=(int)instrucciones.size()){
+        estado = "Finished";
+        return estado;
+    }
     string temp = instrucciones[pc];
     pc = pc+1;
     return temp;
 }
 
-void Proceso::setEstado(string estado_input){
-    estado = estado_input;
+int Proceso::getPID(){
+    return pid;
 }
 
-string Proceso::getEstado(){
-    return estado;
+int Proceso::getQuantum(){
+    return quantum;
 }
 
 
@@ -125,3 +121,17 @@ int& Proceso::getPC(){
 void Proceso::setPC(int n){
     pc = n;
 }
+
+string Proceso::getEstado(){
+    return estado;
+}
+
+
+void Proceso::setEstado(string estado_input){
+    estado = estado_input;
+}
+
+
+
+
+

@@ -13,33 +13,31 @@ using namespace std;
 
 class Proceso {
 
-private:
+
     int pid;
     int pc; // Program Counter simulado
     map<string,int> registros;
     int a,b,c;
     int quantum;
-    string estado; // "Listo", "Ejecutando", "Terminado"
+    string estado; 
     vector<string> instrucciones;
 
 public:
     Proceso();
     Proceso(string nombreArchivo);
     bool instruccionesPendientes();
-    void guardarContexto();
-    void cargarContexto();
     void cargarInformacion(std::string nombreArchivo);
     void cargarInstrucciones();
-    int getPID();
-    int getQuantum();
+    
     map<string,int>& getElementos();
     string getInstruccion();
-    void setEstado(string estado_input);
-    string getEstado();
-
+    int getPID();
+    int getQuantum();
     int& getPC();
     void setPC(int n);
-
+    void setEstado(string estado_input);
+    string getEstado();
+    
     vector<string> splitString(string entrada, char separador);
 };
 
