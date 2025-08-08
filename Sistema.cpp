@@ -18,7 +18,7 @@ int main(){
     cout<<endl;
 
 
-    ifstream file("procesos/proceso.txt");
+    ifstream file("procesos/procesos.txt");
     if (!file) {
         cout << "Error abriendo archivo!" << endl;
         return 0;
@@ -48,10 +48,10 @@ int main(){
         for(int i = 0; i< quantum;i++){
             if(procesoTemp.getEstado()=="Finished") break;
             cpu.correr(procesoTemp);
+        // imprimir en el .log
             for(pair<int,Proceso> pares: procesos) pares.second.writeLog();
             ofstream logFile("output.log", ios::app);
             logFile<<"----------------------"<<endl;
-            
         }
 
 
