@@ -66,7 +66,7 @@ void Proceso::cargarInformacion(string linea) {
 }
 
 void Proceso::cargarInstrucciones() {
-    // Construir el nombre del archivo basado en el PID
+    // Construir el nombre del archivo segun el PID
     string nombreArchivo = "procesos/" + to_string(pid) + ".txt";
     ifstream archivo(nombreArchivo);
     if (!archivo) {
