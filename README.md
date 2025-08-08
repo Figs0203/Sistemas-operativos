@@ -21,10 +21,10 @@ Sistemas-operativos/
 ├── Sistema.cpp            # Lógica principal del simulador
 ├── makefile              # Configuración de compilación
 ├── procesos/             # Archivos de procesos de ejemplo
-│   ├── proceso1.txt
-│   ├── proceso2.txt
-│   └── proceso3.txt
-└── RAM/                  # Almacenamiento de contexto
+   ├── proceso1.txt
+   ├── proceso2.txt
+   └── proceso3.txt
+                   # Almacenamiento de contexto
 ```
 
 ## Funcionamiento

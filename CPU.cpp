@@ -28,7 +28,7 @@ void CPU::correr(Proceso& proceso){
     map<string,int>& elementos = proceso.getElementos();
     string instrucciones = proceso.getInstruccion();
     if(instrucciones == "Finished") {   
-        cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado() << endl;
+        cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado()<<" PC: " <<proceso.getPC()<< endl;
         for(pair<string,int> p:elementos)cout<<p.first<<" "<<p.second<<" ";
         cout<<endl;cout<<endl;
         return;
@@ -38,7 +38,7 @@ void CPU::correr(Proceso& proceso){
 
 
 // mostrar resultados iniciales
-    cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado() << endl;
+    cout << "Ejecutando instrucción: " << instrucciones<< " en el Proceso "<< proceso.getPID()<< " Estado: "<<proceso.getEstado()<<" PC: " <<proceso.getPC() << endl;
     for(pair<string,int> p:elementos)cout<<p.first<<" "<<p.second<<" ";
     cout<<endl;
 
@@ -89,7 +89,7 @@ void CPU::correr(Proceso& proceso){
     // JM (simulado)
     else if (instruccion == "JMP") {
         int& destino = proceso.getPC();
-        destino = stoi(variables[0]);
+        if(stoi(variables[0])<(int)instrucciones.size()) destino = stoi(variables[0]);
     }
 
     // Mostrar resultado actualizado

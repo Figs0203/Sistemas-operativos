@@ -138,7 +138,7 @@ void Proceso:: writeLog(){
         // guardando datos en .log
 
 
-        ofstream logFile("output.log", ios::app); // use std::ios::app to append to the file
+        ofstream logFile("output.log", ios::app); 
 
         if (!logFile) {
             cout << "Failed to open log file!" << endl;
@@ -146,7 +146,7 @@ void Proceso:: writeLog(){
         }
 
         // escribir los datos
-        logFile<<"PID:"<<pid<<" Quantum: "<<quantum<<" Estado: "<<estado<<endl;
+        logFile<<"PID:"<<pid<<" Quantum: "<<quantum<<" Estado: "<<estado<<" PC:"<<pc<<endl;
 
         for(pair<string,int> p: registros)logFile<<p.first<<" "<<p.second<<" ";
         logFile<<endl;

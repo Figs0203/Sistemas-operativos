@@ -18,7 +18,7 @@ int main(){
     cout<<endl;
 
 
-    ifstream file("procesos/procesos.txt");
+    ifstream file("procesos/proceso.txt");
     if (!file) {
         cout << "Error abriendo archivo!" << endl;
         return 0;
@@ -27,7 +27,7 @@ int main(){
     queue<int> roundRobin;
     map<int,Proceso> procesos;
     string line;
-
+// cargar diccionario de procesos y queue de PIDs para ejecutar el algoritmo de roundrobin
     while (getline(file, line)) { 
         cout << line << endl;
         Proceso p(line);
@@ -44,13 +44,14 @@ int main(){
         roundRobin.pop();
         int quantum = procesoTemp.getQuantum();
 
-        // cpu.correr(procesoTemp);
+        // por n quantums correr n veces el proceso
         for(int i = 0; i< quantum;i++){
             if(procesoTemp.getEstado()=="Finished") break;
             cpu.correr(procesoTemp);
             for(pair<int,Proceso> pares: procesos) pares.second.writeLog();
             ofstream logFile("output.log", ios::app);
             logFile<<"----------------------"<<endl;
+            
         }
 
 
