@@ -4,6 +4,7 @@
 
 Este proyecto implementa un simulador de planificación de procesos que emula el comportamiento de un sistema operativo básico. El simulador utiliza el algoritmo **Round Robin** para gestionar múltiples procesos y simula la ejecución de instrucciones de máquina en un entorno controlado.
 
+
 ## Arquitectura del Sistema
 
 ### Componentes Principales
